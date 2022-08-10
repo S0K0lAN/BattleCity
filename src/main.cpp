@@ -2,7 +2,45 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
+#include <vector>
 
+
+
+
+
+
+
+
+
+int g_windowSizeX = 640;
+int g_windowSizeY = 480;
+
+
+std::vector<GLfloat> get_circle_positions(double pos_x = 0, double pos_y = 0, int smooth = 10, double radius = 0.3 ) {
+    // smooth - number of dots in circle
+    // coordinates must be the same as in OpenGL
+    // smooth must be number of x-coordinates
+
+    std::vector<GLfloat> verts((2 * smooth) * 3);
+    int i = 0;
+    for (double x = -radius + pos_x; x <= radius + pos_x; x += 2 * radius / smooth) {
+        float y1 = pos_y + sqrt(pow(radius, 2) - pow(x, 2) + 2 * pos_x * x - pow(pos_x, 2));
+        float y2 = pos_y - sqrt(pow(radius, 2) - pow(x, 2) + 2 * pos_x * x - pow(pos_x, 2));
+
+        verts[i] = x;
+        verts[i + 1] = y1;
+        verts[i + 2] = 0;
+        verts[verts.size() - 3 - i] = x;
+        verts[verts.size() - 2 - i] =  y2;
+        verts[verts.size() - 1 - i] = 0;
+
+        
+
+        i += 3;
+    }
+
+    return verts;
+}
 
 
 
@@ -42,9 +80,6 @@ const char* fragment_shader =
 
 
 
-int g_windowSizeX = 640;
-int g_windowSizeY = 480;
-
 
 void glfwWindowSizeCallback(GLFWwindow* pWindow, int width, int height)
 {
@@ -63,6 +98,22 @@ void glfwKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int
 
 int main(void)
 {
+
+    std::vector<GLfloat> verts = get_circle_positions();
+
+    for (int i = 0; i < verts.size() - 1; i += 3)
+        std::cout << verts[i] << " " << verts[i + 1] << " " << verts[i + 2] << std::endl;
+
+
+
+
+
+
+
+
+
+
+
     /* Initialize the library */
     if (!glfwInit())
     {
